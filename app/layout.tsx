@@ -8,9 +8,9 @@ const mono = Geist_Mono({ variable: "--font-mono", subsets: ["latin"] });
 export const metadata: Metadata = {
   metadataBase: new URL("https://anami.dev"),
   title: { default: "Anamika Hareesh — Student builder", template: "%s — anami.dev" },
-  description: "Anamika Hareesh is a high school student building apps and exploring agentic AI, hardware, math, and physics.",
+  description: "Anamika Hareesh is a high school student building apps and exploring agentic AI and AI-powered education.",
   keywords: ["Anamika", "app developer", "AI developer", "student builder", "portfolio"],
-  openGraph: { title: "Anamika Hareesh — Building apps that matter.", description: "High school student building apps and exploring agentic AI and physical computing.", type: "website", siteName: "anami.dev" },
+  openGraph: { title: "Anamika Hareesh — Building apps that matter.", description: "High school student exploring agentic AI and AI-powered education.", type: "website", siteName: "anami.dev" },
   twitter: { card: "summary_large_image", title: "Anamika Hareesh — Student builder", description: "Building apps that matter." },
   icons: { icon: "/favicon.svg" },
 };
