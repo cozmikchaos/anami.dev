@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { FormEvent, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, BrainCircuit, Cuboid, Mic, Orbit, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, BrainCircuit, Cuboid, Mic, Orbit, Send, Sparkles } from "lucide-react";
 
 const reveal = {
   initial: { opacity: 0, y: 28, filter: "blur(8px)" },
@@ -10,6 +11,70 @@ const reveal = {
   viewport: { once: true, margin: "-70px" },
   transition: { duration: 0.7 },
 };
+
+const worlds = {
+  "Human Heart": {
+    color: "#ef3154",
+    stations: [
+      ["Arterial bloodstream", "Oxygen-rich blood moves away from the heart under strong, rhythmic pressure."],
+      ["Heart chambers", "Four chambers work as two synchronized pumps, keeping blood moving in the correct direction."],
+      ["Lung exchange", "Across a thin membrane, carbon dioxide leaves the blood while oxygen enters it."],
+      ["Capillary network", "Tiny vessels deliver oxygen directly to living tissue, one cell at a time."],
+    ],
+  },
+  "Black Holes": {
+    color: "#8d68ff",
+    stations: [
+      ["Stellar birth", "A black hole can begin with a star many times more massive than our Sun."],
+      ["Core collapse", "When its fuel runs out, the star’s core can collapse in less than a second."],
+      ["Curved spacetime", "Gravity changes the paths that matter and light can take through spacetime."],
+      ["Event horizon", "Beyond this boundary, every possible path points inward—even the paths followed by light."],
+    ],
+  },
+  "Inside an Atom": {
+    color: "#35dbe8",
+    stations: [
+      ["Scale of matter", "Everything around us is built from atoms, but most of each atom is empty space."],
+      ["The nucleus", "Protons and neutrons pack almost all the atom’s mass into its tiny center."],
+      ["Electron cloud", "Electrons occupy probability clouds rather than traveling in simple planetary orbits."],
+      ["Energy levels", "Electrons absorb and release exact amounts of energy as they move between allowed states."],
+    ],
+  },
+} as const;
+
+type WorldName = keyof typeof worlds;
+
+function LokaExperience() {
+  const [world, setWorld] = useState<WorldName>("Human Heart");
+  const [station, setStation] = useState(0);
+  const [question, setQuestion] = useState("");
+  const [answer, setAnswer] = useState("Move through the world or ask me something about what you see.");
+  const current = worlds[world];
+  const ask = (event: FormEvent) => {
+    event.preventDefault();
+    if (!question.trim()) return;
+    const q = question.toLowerCase();
+    let response = `That connects to ${current.stations[station][0].toLowerCase()}. ${current.stations[station][1]}`;
+    if (q.includes("why")) response = `The important “why” here is cause and effect: ${current.stations[station][1]} Loka places you inside the process so that connection is easier to see.`;
+    if (q.includes("what")) response = `You’re currently exploring ${current.stations[station][0]}. ${current.stations[station][1]}`;
+    if (q.includes("how")) response = `Watch how this station connects to the next one. ${current.stations[station][1]}`;
+    setAnswer(response);
+    setQuestion("");
+  };
+  const chooseWorld = (name: WorldName) => { setWorld(name); setStation(0); setAnswer(`Welcome to ${name}. Choose a station or ask your guide a question.`); };
+
+  return <section className="loka-preview">
+    <div className="loka-preview-head"><div><span className="eyebrow">EXPERIENCE PREVIEW</span><h2>Enter a world<br />of knowledge.</h2></div><p>Choose a lesson, explore its concept stations, and ask Loka’s guide a question.</p></div>
+    <div className="loka-sim" style={{ "--world-color": current.color } as React.CSSProperties}>
+      <div className="loka-sim-top"><b>LOKA<span>◦</span></b><div>{(Object.keys(worlds) as WorldName[]).map(name => <button className={world === name ? "active" : ""} onClick={() => chooseWorld(name)} key={name}>{name}</button>)}</div><small>GUIDED EXPERIENCE</small></div>
+      <div className="loka-sim-world">
+        <div className="loka-world-art"><div className="world-grid"/><div className="world-core"><i/><i/><i/><strong>{world === "Human Heart" ? "♥" : world === "Black Holes" ? "◉" : "✦"}</strong></div><span>{current.stations[station][0]}</span></div>
+        <aside className="loka-guide"><div className="loka-guide-title"><Sparkles/><span><small>YOUR AI GUIDE</small><b>Ask Loka</b></span></div><p>{answer}</p><form onSubmit={ask}><input aria-label="Ask Loka a question" value={question} onChange={e => setQuestion(e.target.value)} placeholder={`Ask about ${world.toLowerCase()}…`}/><button aria-label="Send question"><Send/></button></form></aside>
+      </div>
+      <div className="loka-stations">{current.stations.map(([title], index) => <button key={title} onClick={() => { setStation(index); setAnswer(current.stations[index][1]); }} className={station === index ? "active" : ""}><span>0{index + 1}</span><b>{title}</b></button>)}</div>
+    </div>
+  </section>;
+}
 
 export function LokaProject() {
   return <main className="loka-page">
@@ -26,6 +91,8 @@ export function LokaProject() {
       </motion.div>
       <motion.img src="/loka-cover.png" alt="Loka immersive learning experience inside the human bloodstream" initial={{ opacity: 0, scale: 1.04 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.15 }} />
     </section>
+
+    <LokaExperience />
 
     <section className="loka-intro">
       <motion.div {...reveal}>
